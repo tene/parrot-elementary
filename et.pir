@@ -19,15 +19,11 @@
 
 .sub main :main
     .param pmc argv
-    load_bytecode 'NCI/call_toolkit_init.pbc'
-    .local pmc c, cti, ech
+    .local pmc c, ech
     load_language 'parrot'
     c = compreg 'parrot'
     c.'import'('Elementary')
-    cti = get_root_global ['parrot';'NCI'], 'call_toolkit_init'
-    .local pmc elm_init
-    elm_init = get_global 'elm_init'
-    argv = cti(elm_init, argv)
+    argv = 'elm_init'(argv)
     .local pmc win, bg, box, fr, fr0, lb, box2
     win = 'elm_win_add'(0,"hello",0)
     'elm_win_title_set'(win, "Hello")

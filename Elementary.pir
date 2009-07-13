@@ -10,7 +10,7 @@ say "Couldn't load elementary"
 exit 1
 has_lib:
 dlfunc $P2, $P1, 'elm_init', 'v3p'
-set_global 'elm_init', $P2
+set_global 'real_elm_init', $P2
 dlfunc $P2, $P1, 'elm_run', 'v'
 set_global 'elm_run', $P2
 dlfunc $P2, $P1, 'elm_exit', 'v'
@@ -67,6 +67,15 @@ set_global 'evas_object_smart_callback_add', $P2
 .end_return
 .end
 
+.sub 'elm_init'
+    .param pmc argv
+    load_bytecode 'NCI/call_toolkit_init.pbc'
+    .local pmc cti, ei
+    cti = get_root_global ['parrot';'NCI'], 'call_toolkit_init'
+    ei = get_global 'real_elm_init'
+    argv = cti(ei, argv)
+    .return (argv)
+.end
 # Local Variables:
 #   mode: pir
 #   fill-column: 100
