@@ -63,6 +63,14 @@ set_global 'evas_object_size_hint_weight_set', $P2
 dlfunc $P2, $P1, 'evas_object_smart_callback_add', 'vptpp'
 set_global 'evas_object_smart_callback_add', $P2
 
+loadlib $P1, 'evas_cb_helper'
+if $P1 goto has_evas_cb_helper_lib
+say "Couldn't load evas_cb_helper"
+exit 1
+has_evas_cb_helper_lib:
+dlfunc $P2, $P1, 'make_evas_cb_helper', 'PJPPS'
+set_global 'make_evas_cb_helper', $P2
+
 .begin_return
 .end_return
 .end
@@ -75,6 +83,61 @@ set_global 'evas_object_smart_callback_add', $P2
     ei = get_global 'real_elm_init'
     argv = cti(ei, argv)
     .return (argv)
+.end
+
+.namespace ['Elementary';'Window']
+
+.sub '' :anon :load :init
+    .local pmc ns, cl
+    ns = get_namespace
+    cl = newclass ns
+    addattribute cl, 'widget'
+    set_hll_global ['Elementary'], 'Window', cl
+.end
+
+.sub new
+    .param pmc parent
+    .param string name
+    .param int type
+    .local pmc win, cl, obj
+    win = 'elm_win_add'(parent, name, type)
+    'elm_win_title_set'(win, name)
+    cl = get_hll_global ['Elementary'], 'Window'
+    obj = new cl
+    setattribute obj, 'widget', win
+    .return (obj)
+.end
+
+.sub 'add_callback' :method
+    .param string event
+    .param pmc function
+    .param pmc user_data
+    .local pmc cb, win
+    cb = 'make_evas_cb_helper'(function, user_data, 'vUpp')
+    win = getattribute self, 'widget'
+    'evas_object_smart_callback_add'(win, event, cb, user_data)
+.end
+
+.sub 'widget_add' :method
+    .param string type
+    .param num x
+    .param num y
+    .local pmc obj, win
+    .local string func
+    func = concat 'elm_', type
+    func = concat func, '_add'
+    win = getattribute self, 'widget'
+    $P0 = get_hll_global ['Elementary'], func
+    obj = $P0(win)
+    'evas_object_size_hint_weight_set'(obj,1.0,1.0)
+    .return (obj)
+.end
+
+.sub 'resize_object_add' :method
+    .param pmc obj
+    .local pmc win
+    win = getattribute self, 'widget'
+    'elm_win_resize_object_add'(win,obj)
 .end
 # Local Variables:
 #   mode: pir

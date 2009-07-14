@@ -24,35 +24,26 @@
     c = compreg 'parrot'
     c.'import'('Elementary')
     argv = 'elm_init'(argv)
-    .local pmc win, bg, box, fr, fr0, lb, box2
-    win = 'elm_win_add'(0,"hello",0)
-    'elm_win_title_set'(win, "Hello")
-    $P2 = new 'String'
-    $P2 = 'delete-request'
-    .local pmc cb, mech
-    $P0 = loadlib 'evas_cb_helper'
-    if $P0 goto has_helper_lib
-    say 'oh noes'
-    exit 1
-    has_helper_lib:
-    .const 'Sub' $P1 = 'win-del'
-    mech = dlfunc $P0, 'make_evas_cb_helper', 'PJPPS'
-    cb = mech($P1, $P2, 'vUpp')
-    'evas_object_smart_callback_add'(win, 'delete-request', cb, $P2)
+    .local pmc ewin, win, bg, box, fr, fr0, lb, box2
+    $P0 = get_hll_global ['Elementary';'Window'], 'new'
+    ewin = $P0(0, "Hello", 0)
+    .local pmc user_data
+    user_data = new 'String'
+    user_data = 'delete-request'
+    .const 'Sub' cb = 'win-del'
+    ewin.'add_callback'('delete-request', cb, user_data)
+    win = getattribute ewin, 'widget'
 
-    bg = 'elm_bg_add'(win)
-    'evas_object_size_hint_weight_set'(bg,1.0,1.0)
-    'elm_win_resize_object_add'(win,bg)
+    bg = ewin.'widget_add'('bg', 1.0, 1.0)
+    ewin.'resize_object_add'(bg)
     'evas_object_show'(bg)
 
-    box = 'elm_box_add'(win)
-    'evas_object_size_hint_weight_set'(box,1.0,1.0)
-    'elm_win_resize_object_add'(win,box)
+    box = ewin.'widget_add'('box', 1.0, 1.0)
+    ewin.'resize_object_add'(box)
     'evas_object_show'(box)
 
-    fr = 'elm_frame_add'(win)
+    fr = ewin.'widget_add'('frame', 1.0, 1.0)
     'elm_frame_style_set'(fr,'pad_large')
-    'evas_object_size_hint_weight_set'(fr,1.0,1.0)
     'elm_box_pack_end'(box,fr)
     'evas_object_show'(fr)
 
@@ -84,11 +75,10 @@
     'evas_object_size_hint_weight_set'(bt,1.0,1.0)
     'elm_box_pack_end'(box2, bt)
     'evas_object_show'(bt)
-    .const 'Sub' $P1 = 'click-ok'
-    $P2 = new 'String'
-    $P2 = "YA RLY"
-    cb = mech($P1, $P2, 'vUpp')
-    'evas_object_smart_callback_add'(bt, 'clicked', cb, $P2)
+    .const 'Sub' cb2 = 'click-ok'
+    user_data = new 'String'
+    user_data = "YA RLY"
+    ewin.'add_callback'('clicked', cb2, user_data)
 
     bt = 'elm_button_add'(win)
     'elm_button_label_set'(bt, "NO WAI")
@@ -98,7 +88,7 @@
     .const 'Sub' $P1 = 'click-no'
     $P2 = new 'String'
     $P2 = "NO WAI"
-    cb = mech($P1, $P2, 'vUpp')
+    cb = 'make_evas_cb_helper'($P1, $P2, 'vUpp')
     'evas_object_smart_callback_add'(bt, 'clicked', cb, $P2)
 
     'evas_object_show'(win)
