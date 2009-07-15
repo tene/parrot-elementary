@@ -37,6 +37,8 @@ dlfunc $P2, $P1, 'elm_button_add', 'pp'
 set_global 'elm_button_add', $P2
 dlfunc $P2, $P1, 'elm_button_label_set', 'vpt'
 set_global 'elm_button_label_set', $P2
+dlfunc $P2, $P1, 'elm_button_style_set', 'vpt'
+set_global 'elm_button_style_set', $P2
 
 dlfunc $P2, $P1, 'elm_frame_add', 'pp'
 set_global 'elm_frame_add', $P2
@@ -173,6 +175,19 @@ set_global 'make_evas_cb_helper', $P2
     lsf(widget, label)
 .end
 
+.sub 'style' :method
+    .param string style
+    .local string func, cl
+    .local pmc ssf, widget
+    $P0 = getattribute self, 'class'
+    cl = $P0
+    widget = getattribute self, 'widget'
+    func = concat 'elm_', cl
+    func = concat func, '_style_set'
+    ssf = get_hll_global ['Elementary'], func
+    ssf(widget, style)
+.end
+
 
 .namespace ['Elementary';'win']
 
@@ -237,13 +252,6 @@ set_global 'make_evas_cb_helper', $P2
 .end
 
 .namespace ['Elementary';'frame']
-
-.sub 'style' :method
-    .param string style
-    .local pmc fr
-    fr = getattribute self, 'widget'
-    'elm_frame_style_set'(fr, style)
-.end
 
 .sub 'content' :method
     .param pmc obj
