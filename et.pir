@@ -24,8 +24,8 @@
     c = compreg 'parrot'
     c.'import'('Elementary')
     argv = 'elm_init'(argv)
-    .local pmc ewin, win, bg, box, fr, fr0, lb, box2
-    $P0 = get_hll_global ['Elementary';'Window'], 'new'
+    .local pmc ewin, win, bg, ebox, box, fr, fr0, lb, box2
+    $P0 = get_hll_global ['Elementary';'win'], 'new'
     ewin = $P0(0, "Hello", 0)
     .local pmc user_data
     user_data = new 'String'
@@ -38,13 +38,15 @@
     ewin.'resize_object_add'(bg)
     'evas_object_show'(bg)
 
-    box = ewin.'widget_add'('box', 1.0, 1.0)
+    ebox = ewin.'widget_add'('box', 1.0, 1.0)
+    box = getattribute ebox, 'widget'
     ewin.'resize_object_add'(box)
-    'evas_object_show'(box)
+    ebox.'show'()
+    #'evas_object_show'(box)
 
     fr = ewin.'widget_add'('frame', 1.0, 1.0)
     'elm_frame_style_set'(fr,'pad_large')
-    'elm_box_pack_end'(box,fr)
+    ebox.'pack_end'(fr)
     'evas_object_show'(fr)
 
     lb = 'elm_label_add'(win)
@@ -75,10 +77,11 @@
     'evas_object_size_hint_weight_set'(bt,1.0,1.0)
     'elm_box_pack_end'(box2, bt)
     'evas_object_show'(bt)
-    .const 'Sub' cb2 = 'click-ok'
-    user_data = new 'String'
-    user_data = "YA RLY"
-    ewin.'add_callback'('clicked', cb2, user_data)
+    .const 'Sub' $P1 = 'click-ok'
+    $P2 = new 'String'
+    $P2 = "YA RLY"
+    cb = 'make_evas_cb_helper'($P1, $P2, 'vUpp')
+    'evas_object_smart_callback_add'(bt, 'clicked', cb, $P2)
 
     bt = 'elm_button_add'(win)
     'elm_button_label_set'(bt, "NO WAI")

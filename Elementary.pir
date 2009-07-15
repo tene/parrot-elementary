@@ -85,27 +85,19 @@ set_global 'make_evas_cb_helper', $P2
     .return (argv)
 .end
 
-.namespace ['Elementary';'Window']
+.namespace ['Elementary';'Widget']
 
 .sub '' :anon :load :init
     .local pmc ns, cl
     ns = get_namespace
     cl = newclass ns
     addattribute cl, 'widget'
-    set_hll_global ['Elementary'], 'Window', cl
+    addattribute cl, 'class'
+    set_hll_global ['Elementary'], 'Widget', cl
 .end
 
 .sub new
-    .param pmc parent
-    .param string name
-    .param int type
-    .local pmc win, cl, obj
-    win = 'elm_win_add'(parent, name, type)
-    'elm_win_title_set'(win, name)
-    cl = get_hll_global ['Elementary'], 'Window'
-    obj = new cl
-    setattribute obj, 'widget', win
-    .return (obj)
+    die 'Abstract base class... only instantiate subclasses'
 .end
 
 .sub 'add_callback' :method
@@ -122,14 +114,54 @@ set_global 'make_evas_cb_helper', $P2
     .param string type
     .param num x
     .param num y
-    .local pmc obj, win
+    .local pmc obj, widget, cl
     .local string func
     func = concat 'elm_', type
     func = concat func, '_add'
-    win = getattribute self, 'widget'
+    widget = getattribute self, 'widget'
     $P0 = get_hll_global ['Elementary'], func
-    obj = $P0(win)
-    'evas_object_size_hint_weight_set'(obj,1.0,1.0)
+    widget = $P0(widget)
+    'evas_object_size_hint_weight_set'(widget,1.0,1.0)
+    cl = get_hll_global ['Elementary'], type
+    if_null cl, no_class
+    obj = new cl
+    setattribute obj, 'widget', widget
+    $P0 = box type
+    setattribute obj, 'class', $P0
+    .return (obj)
+  no_class:
+    .return (widget)
+.end
+
+.sub 'show' :method
+    .local pmc obj
+    obj = getattribute self, 'widget'
+    'evas_object_show'(obj)
+.end
+
+
+.namespace ['Elementary';'win']
+
+.sub '' :anon :load :init
+    .local pmc ns, parent, cl
+    ns = get_namespace
+    parent = get_hll_global ['Elementary'], 'Widget'
+    cl = subclass parent, ns
+    set_hll_global ['Elementary'], 'win', cl
+.end
+
+.sub 'new'
+    .param pmc parent
+    .param string name
+    .param int type
+    .local pmc win, cl, obj
+    win = 'elm_win_add'(parent, name, type)
+    'elm_win_title_set'(win, name)
+    cl = get_hll_global ['Elementary'], 'win'
+    obj = new cl
+    setattribute obj, 'widget', win
+    $P0 = box 'win'
+    setattribute obj, 'class', $P0
     .return (obj)
 .end
 
@@ -139,6 +171,23 @@ set_global 'make_evas_cb_helper', $P2
     win = getattribute self, 'widget'
     'elm_win_resize_object_add'(win,obj)
 .end
+.namespace ['Elementary';'box']
+
+.sub '' :anon :load :init
+    .local pmc ns, parent, cl
+    ns = get_namespace
+    parent = get_hll_global ['Elementary'], 'Widget'
+    cl = subclass parent, ns
+    set_hll_global ['Elementary'], 'box', cl
+.end
+
+.sub 'pack_end' :method
+    .param pmc obj
+    .local pmc box
+    box = getattribute self, 'widget'
+    'elm_box_pack_end'(box,obj)
+.end
+
 # Local Variables:
 #   mode: pir
 #   fill-column: 100
