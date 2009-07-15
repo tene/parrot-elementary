@@ -24,7 +24,7 @@
     c = compreg 'parrot'
     c.'import'('Elementary')
     argv = 'elm_init'(argv)
-    .local pmc ewin, win, bg, box, fr, fr0, lb, box2
+    .local pmc ewin, bg, box, fr, fr0, lb, box2
     $P0 = get_hll_global ['Elementary';'win'], 'new'
     ewin = $P0(0, "Hello", 0)
     .local pmc user_data
@@ -32,7 +32,6 @@
     user_data = 'delete-request'
     .const 'Sub' cb = 'win-del'
     ewin.'add_callback'('delete-request', cb, user_data)
-    win = getattribute ewin, 'widget'
 
     bg = ewin.'widget_add'('bg', 1.0, 1.0)
     ewin.'resize_object_add'(bg)
@@ -43,56 +42,51 @@
     box.'show'()
 
     fr = ewin.'widget_add'('frame', 1.0, 1.0)
-    'elm_frame_style_set'(fr,'pad_large')
+    fr.'style'('pad_large')
     box.'pack_end'(fr)
-    'evas_object_show'(fr)
+    fr.'show'()
 
-    lb = 'elm_label_add'(win)
-    'elm_label_label_set'(lb, "Hello, World!")
-    'elm_frame_content_set'(fr, lb)
-    'evas_object_show'(lb)
+    lb = ewin.'widget_add'('label', 1.0, 1.0)
+    lb.'label'("Hello, World!")
+    fr.'content'(lb)
+    lb.'show'()
 
-    fr0 = 'elm_frame_add'(win)
-    'elm_frame_style_set'(fr0, 'outdent_bottom')
-    'evas_object_size_hint_weight_set'(fr0,1.0,1.0)
+    fr0 = ewin.'widget_add'('frame', 1.0, 1.0)
+    fr0.'style'('outdent_bottom')
     box.'pack_end'(fr0)
-    'evas_object_show'(fr0)
+    fr0.'show'()
 
-    fr = 'elm_frame_add'(win)
-    'elm_frame_style_set'(fr, 'pad_medium')
-    'elm_frame_content_set'(fr0, fr)
-    'evas_object_show'(fr)
+    fr = ewin.'widget_add'('frame', 1.0, 1.0)
+    fr.'style'('pad_medium')
+    fr0.'content'(fr)
+    fr.'show'()
 
-    box2 = 'elm_box_add'(win)
-    'elm_box_horizontal_set'(box2, 1)
-    'elm_box_homogenous_set'(box2, 1)
-    'elm_frame_content_set'(fr, box2)
-    'evas_object_show'(box2)
+    box2 = ewin.'widget_add'('box', 1.0, 1.0)
+    box2.'horizontal'(1)
+    box2.'homogenous'(1)
+    fr.'content'(box2)
+    box2.'show'()
 
     .local pmc bt
-    bt = 'elm_button_add'(win)
-    'elm_button_label_set'(bt, "YA RLY")
-    'evas_object_size_hint_weight_set'(bt,1.0,1.0)
-    'elm_box_pack_end'(box2, bt)
-    'evas_object_show'(bt)
+    bt = ewin.'widget_add'('button', 1.0, 1.0)
+    bt.'label'("YA RLY")
+    box2.'pack_end'(bt)
+    bt.'show'()
     .const 'Sub' $P1 = 'click-ok'
     $P2 = new 'String'
     $P2 = "YA RLY"
-    cb = 'make_evas_cb_helper'($P1, $P2, 'vUpp')
-    'evas_object_smart_callback_add'(bt, 'clicked', cb, $P2)
+    bt.'add_callback'('clicked', $P1, $P2)
 
-    bt = 'elm_button_add'(win)
-    'elm_button_label_set'(bt, "NO WAI")
-    'evas_object_size_hint_weight_set'(bt,1.0,1.0)
-    'elm_box_pack_end'(box2, bt)
-    'evas_object_show'(bt)
+    bt = ewin.'widget_add'('button', 1.0, 1.0)
+    bt.'label'("NO WAI")
+    box2.'pack_end'(bt)
+    bt.'show'()
     .const 'Sub' $P1 = 'click-no'
     $P2 = new 'String'
     $P2 = "NO WAI"
-    cb = 'make_evas_cb_helper'($P1, $P2, 'vUpp')
-    'evas_object_smart_callback_add'(bt, 'clicked', cb, $P2)
+    bt.'add_callback'('clicked', $P1, $P2)
 
-    'evas_object_show'(win)
+    ewin.'show'()
     'elm_run'()
     'elm_shutdown'()
 .end

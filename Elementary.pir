@@ -156,6 +156,19 @@ set_global 'make_evas_cb_helper', $P2
     'evas_object_show'(obj)
 .end
 
+.sub 'label' :method
+    .param string label
+    .local string func, cl
+    .local pmc lsf, widget
+    $P0 = getattribute self, 'class'
+    cl = $P0
+    widget = getattribute self, 'widget'
+    func = concat 'elm_', cl
+    func = concat func, '_label_set'
+    lsf = get_hll_global ['Elementary'], func
+    lsf(widget, label)
+.end
+
 
 .namespace ['Elementary';'win']
 
@@ -190,7 +203,25 @@ set_global 'make_evas_cb_helper', $P2
     .param pmc obj
     .local pmc box
     box = getattribute self, 'widget'
+    $I0 = isa obj, 'UnManagedStruct'
+    if $I0 goto unmanaged
+    obj = getattribute obj, 'widget'
+  unmanaged:
     'elm_box_pack_end'(box,obj)
+.end
+
+.sub 'horizontal' :method
+    .param int val
+    .local pmc box
+    box = getattribute self, 'widget'
+    'elm_box_horizontal_set'(box, val)
+.end
+
+.sub 'homogenous' :method
+    .param int val
+    .local pmc box
+    box = getattribute self, 'widget'
+    'elm_box_homogenous_set'(box, val)
 .end
 
 .namespace ['Elementary';'bg']
@@ -200,6 +231,37 @@ set_global 'make_evas_cb_helper', $P2
     .param string group
     say "file_set NYI"
 .end
+
+.namespace ['Elementary';'frame']
+
+.sub 'style' :method
+    .param string style
+    .local pmc fr
+    fr = getattribute self, 'widget'
+    'elm_frame_style_set'(fr, style)
+.end
+
+.sub 'content' :method
+    .param pmc obj
+    .local pmc fr
+    fr = getattribute self, 'widget'
+    $I0 = isa obj, 'UnManagedStruct'
+    if $I0 goto unmanaged
+    obj = getattribute obj, 'widget'
+  unmanaged:
+    'elm_frame_content_set'(fr, obj)
+.end
+
+.namespace ['Elementary';'label']
+.sub 'hax'
+    say 'workaround...'
+.end
+
+.namespace ['Elementary';'button']
+.sub 'icon'
+    say 'NYI'
+.end
+
 # Local Variables:
 #   mode: pir
 #   fill-column: 100
