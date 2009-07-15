@@ -79,11 +79,17 @@ set_global 'make_evas_cb_helper', $P2
 
 .sub 'elm_init'
     .param pmc argv
-    load_bytecode 'NCI/call_toolkit_init.pbc'
+    .param pmc name :optional
+    .param int has_name :opt_flag
+    $P0 = compreg 'parrot'
+    $P0.'import'('NCI::Utils')
     .local pmc cti, ei
-    cti = get_root_global ['parrot';'NCI'], 'call_toolkit_init'
     ei = get_global 'real_elm_init'
-    argv = cti(ei, argv)
+    if has_name goto with_name
+    argv = 'call_toolkit_init'(ei, argv)
+    .return (argv)
+  with_name:
+    argv = 'call_toolkit_init'(ei, argv, name)
     .return (argv)
 .end
 

@@ -1,2 +1,2 @@
 #!/bin/bash
-parrot -G -X /usr/local/lib et.pir
+parrot -X /usr/local/lib et.pir

@@ -1,5 +1,5 @@
 use Elementary:from<parrot>;
-elm_init(@*REALARGS);
+elm_init(@*ARGV, $*PROGRAM_NAME);
 my $win = Elementary::win::new(0, "Hello", 0);
 $win.add_callback('delete-request', -> $data, $info { say 'Goodbye…'; elm_exit() }, "deleted");
 my $bg = $win.'widget_add'('bg', 1.0, 1.0);
