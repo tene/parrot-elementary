@@ -24,7 +24,7 @@
     c = compreg 'parrot'
     c.'import'('Elementary')
     argv = 'elm_init'(argv)
-    .local pmc ewin, win, bg, ebox, box, fr, fr0, lb, box2
+    .local pmc ewin, win, bg, box, fr, fr0, lb, box2
     $P0 = get_hll_global ['Elementary';'win'], 'new'
     ewin = $P0(0, "Hello", 0)
     .local pmc user_data
@@ -38,15 +38,13 @@
     ewin.'resize_object_add'(bg)
     bg.'show'()
 
-    ebox = ewin.'widget_add'('box', 1.0, 1.0)
-    box = getattribute ebox, 'widget'
+    box = ewin.'widget_add'('box', 1.0, 1.0)
     ewin.'resize_object_add'(box)
-    ebox.'show'()
-    #'evas_object_show'(box)
+    box.'show'()
 
     fr = ewin.'widget_add'('frame', 1.0, 1.0)
     'elm_frame_style_set'(fr,'pad_large')
-    ebox.'pack_end'(fr)
+    box.'pack_end'(fr)
     'evas_object_show'(fr)
 
     lb = 'elm_label_add'(win)
@@ -57,7 +55,7 @@
     fr0 = 'elm_frame_add'(win)
     'elm_frame_style_set'(fr0, 'outdent_bottom')
     'evas_object_size_hint_weight_set'(fr0,1.0,1.0)
-    'elm_box_pack_end'(box, fr0)
+    box.'pack_end'(fr0)
     'evas_object_show'(fr0)
 
     fr = 'elm_frame_add'(win)
