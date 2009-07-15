@@ -96,6 +96,23 @@ set_global 'make_evas_cb_helper', $P2
     set_hll_global ['Elementary'], 'Widget', cl
 .end
 
+.sub 'make-subclasses' :anon :load :init
+    .local pmc parent, list, i, ns, cl
+    .local string item
+    parent = get_hll_global ['Elementary'], 'Widget'
+    list = split ' ', 'win box bg label frame button'
+    i = new ['Iterator'], list
+  loop:
+    unless i goto loop_end
+    item = shift i
+    ns = get_hll_namespace ['Elementary';item]
+    if_null ns, loop
+    cl = subclass parent, ns
+    set_hll_global ['Elementary'], item, cl
+    goto loop
+  loop_end:
+.end
+
 .sub new
     die 'Abstract base class... only instantiate subclasses'
 .end
@@ -142,14 +159,6 @@ set_global 'make_evas_cb_helper', $P2
 
 .namespace ['Elementary';'win']
 
-.sub '' :anon :load :init
-    .local pmc ns, parent, cl
-    ns = get_namespace
-    parent = get_hll_global ['Elementary'], 'Widget'
-    cl = subclass parent, ns
-    set_hll_global ['Elementary'], 'win', cl
-.end
-
 .sub 'new'
     .param pmc parent
     .param string name
@@ -172,14 +181,6 @@ set_global 'make_evas_cb_helper', $P2
     'elm_win_resize_object_add'(win,obj)
 .end
 .namespace ['Elementary';'box']
-
-.sub '' :anon :load :init
-    .local pmc ns, parent, cl
-    ns = get_namespace
-    parent = get_hll_global ['Elementary'], 'Widget'
-    cl = subclass parent, ns
-    set_hll_global ['Elementary'], 'box', cl
-.end
 
 .sub 'pack_end' :method
     .param pmc obj

@@ -8,7 +8,7 @@
 .sub 'click-ok'
     .param pmc data
     .param pmc unused
-    say 'YES!!!'
+    say ':D'
 .end
 
 .sub 'click-no'
