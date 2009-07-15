@@ -36,7 +36,7 @@
 
     bg = ewin.'widget_add'('bg', 1.0, 1.0)
     ewin.'resize_object_add'(bg)
-    'evas_object_show'(bg)
+    bg.'show'()
 
     ebox = ewin.'widget_add'('box', 1.0, 1.0)
     box = getattribute ebox, 'widget'

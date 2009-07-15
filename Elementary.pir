@@ -178,6 +178,10 @@ set_global 'make_evas_cb_helper', $P2
     .param pmc obj
     .local pmc win
     win = getattribute self, 'widget'
+    $I0 = isa obj, 'UnManagedStruct'
+    if $I0 goto unmanaged
+    obj = getattribute obj, 'widget'
+  unmanaged:
     'elm_win_resize_object_add'(win,obj)
 .end
 .namespace ['Elementary';'box']
@@ -189,6 +193,13 @@ set_global 'make_evas_cb_helper', $P2
     'elm_box_pack_end'(box,obj)
 .end
 
+.namespace ['Elementary';'bg']
+
+.sub 'file_set' :method
+    .param string file
+    .param string group
+    say "file_set NYI"
+.end
 # Local Variables:
 #   mode: pir
 #   fill-column: 100
