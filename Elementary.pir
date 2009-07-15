@@ -94,11 +94,14 @@ set_global 'make_evas_cb_helper', $P2
     addattribute cl, 'widget'
     addattribute cl, 'class'
     set_hll_global ['Elementary'], 'Widget', cl
+    $P0 = compreg 'parrot'
+    $P0.'import'('Elementary')
 .end
 
 .sub 'make-subclasses' :anon :load :init
-    .local pmc parent, list, i, ns, cl
+    .local pmc parent, list, i, ns, cl, compiler
     .local string item
+    compiler = compreg 'parrot'
     parent = get_hll_global ['Elementary'], 'Widget'
     list = split ' ', 'win box bg label frame button'
     i = new ['Iterator'], list
@@ -109,6 +112,7 @@ set_global 'make_evas_cb_helper', $P2
     if_null ns, loop
     cl = subclass parent, ns
     set_hll_global ['Elementary'], item, cl
+    compiler.'import'('parrot', 'Elementary', 'targetns'=>ns)
     goto loop
   loop_end:
 .end
@@ -177,7 +181,7 @@ set_global 'make_evas_cb_helper', $P2
     .param string name
     .param int type
     .local pmc win, cl, obj
-    win = 'elm_win_add'(parent, name, type)
+    win = 'elm_win_add'(0, name, type)
     'elm_win_title_set'(win, name)
     cl = get_hll_global ['Elementary'], 'win'
     obj = new cl
