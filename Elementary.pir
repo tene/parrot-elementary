@@ -1,6 +1,13 @@
 # Copyright (C) 2004-2009, Parrot Foundation.
 # $Id$
 
+.macro export_dl_func(lib, name, sig)
+    .local pmc edlftmp
+    dlfunc edlftmp, .lib, .name, .sig
+    set_global .name, edlftmp
+.endm
+
+
 .namespace ['Elementary']
 .sub __elementary_init :anon :load
 
@@ -11,67 +18,44 @@ exit 1
 has_lib:
 dlfunc $P2, $P1, 'elm_init', 'v3p'
 set_global 'real_elm_init', $P2
-dlfunc $P2, $P1, 'elm_run', 'v'
-set_global 'elm_run', $P2
-dlfunc $P2, $P1, 'elm_exit', 'v'
-set_global 'elm_exit', $P2
-dlfunc $P2, $P1, 'elm_shutdown', 'v'
-set_global 'elm_shutdown', $P2
-dlfunc $P2, $P1, 'elm_win_add', 'ppti'
-set_global 'elm_win_add', $P2
-dlfunc $P2, $P1, 'elm_bg_add', 'pp'
-set_global 'elm_bg_add', $P2
-dlfunc $P2, $P1, 'elm_label_add', 'pp'
-set_global 'elm_label_add', $P2
+.export_dl_func($P1, 'elm_run', 'v')
+.export_dl_func($P1, 'elm_exit', 'v')
+.export_dl_func($P1, 'elm_shutdown', 'v')
+.export_dl_func($P1, 'elm_win_add', 'ppti')
+.export_dl_func($P1, 'elm_bg_add', 'pp')
+.export_dl_func($P1, 'elm_label_add', 'pp')
 
-dlfunc $P2, $P1, 'elm_box_add', 'pp'
-set_global 'elm_box_add', $P2
-dlfunc $P2, $P1, 'elm_box_pack_end', 'vpp'
-set_global 'elm_box_pack_end', $P2
-dlfunc $P2, $P1, 'elm_box_horizontal_set', 'vpi'
-set_global 'elm_box_horizontal_set', $P2
-dlfunc $P2, $P1, 'elm_box_homogenous_set', 'vpi'
-set_global 'elm_box_homogenous_set', $P2
+.export_dl_func($P1, 'elm_box_add', 'pp')
+.export_dl_func($P1, 'elm_box_pack_end', 'vpp')
+.export_dl_func($P1, 'elm_box_horizontal_set', 'vpi')
+.export_dl_func($P1, 'elm_box_homogenous_set', 'vpi')
 
-dlfunc $P2, $P1, 'elm_button_add', 'pp'
-set_global 'elm_button_add', $P2
-dlfunc $P2, $P1, 'elm_button_label_set', 'vpt'
-set_global 'elm_button_label_set', $P2
-dlfunc $P2, $P1, 'elm_button_style_set', 'vpt'
-set_global 'elm_button_style_set', $P2
+.export_dl_func($P1, 'elm_button_add', 'pp')
+.export_dl_func($P1, 'elm_button_label_set', 'vpt')
+.export_dl_func($P1, 'elm_button_style_set', 'vpt')
 
-dlfunc $P2, $P1, 'elm_frame_add', 'pp'
-set_global 'elm_frame_add', $P2
-dlfunc $P2, $P1, 'elm_frame_content_set', 'vpp'
-set_global 'elm_frame_content_set', $P2
-dlfunc $P2, $P1, 'elm_frame_style_set', 'vpt'
-set_global 'elm_frame_style_set', $P2
-dlfunc $P2, $P1, 'elm_win_title_set', 'vpt'
-set_global 'elm_win_title_set', $P2
-dlfunc $P2, $P1, 'elm_label_label_set', 'vpt'
-set_global 'elm_label_label_set', $P2
-dlfunc $P2, $P1, 'elm_win_resize_object_add', 'vpp'
-set_global 'elm_win_resize_object_add', $P2
+.export_dl_func($P1, 'elm_frame_add', 'pp')
+.export_dl_func($P1, 'elm_frame_content_set', 'vpp')
+.export_dl_func($P1, 'elm_frame_style_set', 'vpt')
+.export_dl_func($P1, 'elm_win_title_set', 'vpt')
+.export_dl_func($P1, 'elm_label_label_set', 'vpt')
+.export_dl_func($P1, 'elm_win_resize_object_add', 'vpp')
 
 loadlib $P1, 'libevas'
 if $P1 goto has_evas_lib
 say "Couldn't load evas"
 exit 1
 has_evas_lib:
-dlfunc $P2, $P1, 'evas_object_show', 'vp'
-set_global 'evas_object_show', $P2
-dlfunc $P2, $P1, 'evas_object_size_hint_weight_set', 'vpff'
-set_global 'evas_object_size_hint_weight_set', $P2
-dlfunc $P2, $P1, 'evas_object_smart_callback_add', 'vptpp'
-set_global 'evas_object_smart_callback_add', $P2
+.export_dl_func($P1, 'evas_object_show', 'vp')
+.export_dl_func($P1, 'evas_object_size_hint_weight_set', 'vpff')
+.export_dl_func($P1, 'evas_object_smart_callback_add', 'vptpp')
 
 loadlib $P1, 'evas_cb_helper'
 if $P1 goto has_evas_cb_helper_lib
 say "Couldn't load evas_cb_helper"
 exit 1
 has_evas_cb_helper_lib:
-dlfunc $P2, $P1, 'make_evas_cb_helper', 'PJPPS'
-set_global 'make_evas_cb_helper', $P2
+.export_dl_func($P1, 'make_evas_cb_helper', 'PJPPS')
 
 .begin_return
 .end_return
